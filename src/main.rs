@@ -4,8 +4,8 @@ use valence::{
     inventory::HeldItem, 
     client::hand_swing::HandSwingEvent, 
     entity::{
-        zombie::ZombieEntityBundle, 
-        entity::NameVisible
+        block_display::BlockDisplayEntityBundle, 
+        display::Scale, text_display::{TextDisplayEntityBundle, Background}
     }, 
     network::{
         async_trait, 
@@ -60,10 +60,8 @@ fn on_client_click(
         };
 
         let bar_slot = held.slot() - 36;
-    
-        if bar_slot == 0 {
-            println!("Slot 0 swung");
-        }
+        
+        println!("Slot {} swung!", bar_slot);
     }
 }
 
@@ -76,7 +74,7 @@ fn setup(
     dimensions.insert(
         ident!("overworld"),
         DimensionType {
-            ambient_light: 1.0,
+            ambient_light: 0.0,
             has_skylight: false,
             has_ceiling: false,
             natural: false,
@@ -92,42 +90,53 @@ fn setup(
         }
     }
 
-    for z in -25..25 {
-        for x in -25..25 {
-            instance.set_block([x, SPAWN_Y, z], BlockState::GRASS_BLOCK);
+    for z in -4..5 {
+        for x in -4..5 {
+            instance.set_block([x, SPAWN_Y, z], BlockState::DEEPSLATE_TILES);
+            instance.set_block([x, SPAWN_Y+4, z], BlockState::DEEPSLATE_TILES);
+        }
+        for y in SPAWN_Y+1..=SPAWN_Y+3 {
+            instance.set_block([-4, y, z], BlockState::DEEPSLATE_TILES);
+            instance.set_block([4, y, z], BlockState::DEEPSLATE_TILES);
         }
     }
 
-    for y in 0..5 {
-        for x in -5..5 {
-            instance.set_block([x, SPAWN_Y + y, 5], BlockState::STONE_BRICKS);
+    for x in -4..5 {
+        for y in SPAWN_Y+1..=SPAWN_Y+3 {
+            instance.set_block([x, y, -4], BlockState::DEEPSLATE_TILES);
+            instance.set_block([x, y, 4], BlockState::DEEPSLATE_TILES);
         }
     }
-
-    instance.set_block(
-        [0, SPAWN_Y+2, 4], 
-        BlockState::WALL_TORCH.set(PropName::Facing, PropValue::North),
-    );
+    instance.set_block([-4, SPAWN_Y+2, -2], BlockState::AIR);
+    instance.set_block([-4, SPAWN_Y+3, -2], BlockState::AIR);
 
     let instance_id = commands.spawn(instance).id();
 
-    commands.spawn(ZombieEntityBundle {
+     commands.spawn(BlockDisplayEntityBundle {
         location: Location(instance_id),
-        position: Position(DVec3::new(4.0, SPAWN_Y as f64 + 1.0, 1.0)),
-        look: Look::new(180.0, 0.0),
-        head_yaw: HeadYaw(135.0),
-        entity_name_visible: NameVisible(true),
+        position: Position(DVec3::new(-4.0, SPAWN_Y as f64 + 2.0, -2.0)),
+        block_display_block_state: valence::entity::block_display::BlockState(BlockState::CRACKED_DEEPSLATE_TILES),
+        display_scale: Scale(Vec3::from([1f32,1f32,1f32])),
         ..Default::default()
     });
 
-    commands.spawn(ZombieEntityBundle {
+   commands.spawn(BlockDisplayEntityBundle {
         location: Location(instance_id),
-        position: Position(DVec3::new(-4.0, SPAWN_Y as f64 + 1.0, 1.0)),
-        look: Look::new(180.0, 0.0),
-        head_yaw: HeadYaw(135.0),
-        entity_name_visible: NameVisible(true),
+        position: Position(DVec3::new(-4.0, SPAWN_Y as f64 + 3.0, -2.0)),
+        block_display_block_state: valence::entity::block_display::BlockState(BlockState::CRACKED_DEEPSLATE_TILES),
+        display_scale: Scale(Vec3::from([1f32,1f32,1f32])),
         ..Default::default()
     });
+
+    commands.spawn(TextDisplayEntityBundle {
+        location: Location(instance_id),
+        position: Position(DVec3::new(0.5, SPAWN_Y as f64 + 2.5, 4.0)),
+        text_display_text: valence::entity::text_display::Text("Have fun!".into_text().bold().color(Color::DARK_RED)),
+        look: Look::new(180.0, 0.0),
+        text_display_background: Background(0),
+        ..Default::default()
+    });
+
 }
 
 fn init_clients(
@@ -144,7 +153,7 @@ fn init_clients(
 ) {
     for (mut loc, mut pos, mut has_repsawn_screen, mut game_mode) in &mut clients {
         loc.0 = instances.iter().next().unwrap();
-        pos.set([0.0, SPAWN_Y as f64 + 1.0, 0.0]);
+        pos.set([0.5, SPAWN_Y as f64 + 1.0, 0.5]);
         has_repsawn_screen.0 = true;
         *game_mode = GameMode::Adventure;
     }
