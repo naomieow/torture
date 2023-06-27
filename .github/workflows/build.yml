@@ -22,7 +22,7 @@ jobs:
           RUSTTARGET: x86_64-unknown-linux-musl
           UPLOAD_MODE: none
       - name: Upload Ubuntu Artifact
-        uses: actions/upload-artifact@v1.3
+        uses: actions/upload-artifact@v3
         with:
           name: Ubuntu Binary
           path: |
@@ -40,7 +40,7 @@ jobs:
           RUSTTARGET: x86_64-pc-windows-gnu
           UPLOAD_MODE: none
       - name: Upload Windows Artifact
-        uses: actions/upload-artifact@v1.3
+        uses: actions/upload-artifact@v3
         with:
           name: Windows Binary
           path: |
