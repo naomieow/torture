@@ -22,7 +22,12 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - run: cargo build --release --all-features
+      # - run: cargo build --release --all-features
+      - name: ${{ matrix.os }} Compile
+        id: compile
+        uses: rust-build/rust-build.action@v1.4.3
+        with:
+          UPLOAD_MODE: none
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
