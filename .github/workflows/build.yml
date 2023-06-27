@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+  
+jobs:
+  build_and_test:
+    name: Build
+    strategy:
+      fail-fast: true
+      matrix:
+        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      # - run: cargo build --release --all-features
+      - name: Compile
+        id: compile
+        uses: rust-build/rust-build.action@v1.4.3
+        with:
+          RUSTTARGET: ${{ matrix.target }}
+          TOOLCHAIN_VERSION: stable
+          UPLOAD_MODE: none
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: Binary
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
