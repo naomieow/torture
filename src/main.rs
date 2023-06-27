@@ -112,7 +112,7 @@ fn setup(
 
     let instance_id = commands.spawn(instance).id();
 
-     commands.spawn(BlockDisplayEntityBundle {
+    commands.spawn(BlockDisplayEntityBundle {
         location: Location(instance_id),
         position: Position(DVec3::new(-4.0, SPAWN_Y as f64 + 2.0, -2.0)),
         block_display_block_state: valence::entity::block_display::BlockState(BlockState::CRACKED_DEEPSLATE_TILES),
@@ -120,7 +120,7 @@ fn setup(
         ..Default::default()
     });
 
-   commands.spawn(BlockDisplayEntityBundle {
+    commands.spawn(BlockDisplayEntityBundle {
         location: Location(instance_id),
         position: Position(DVec3::new(-4.0, SPAWN_Y as f64 + 3.0, -2.0)),
         block_display_block_state: valence::entity::block_display::BlockState(BlockState::CRACKED_DEEPSLATE_TILES),
