@@ -1,4 +1,4 @@
-name: Rust
+name: Build
 
 on:
   push:
@@ -10,13 +10,39 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  build_ubuntu:
+    name: Build Ubuntu
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@master
+      - name: Compile Ubuntu
+        id: compile-ubuntu
+        uses : rust-build/rust-build.action@v1.4.3
+        with:
+          RUSTTARGET: x86_64-unknown-linux-musl
+          UPLOAD_MODE: none
+      - name: Upload Ubuntu Artifact
+        uses: actions/upload-artifact@v1.3
+        with:
+          name: Ubuntu Binary
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Compile Windows
+        id: compile-windows
+        uses : rust-build/rust-build.action@v1.4.3
+        with:
+          RUSTTARGET: x86_64-pc-windows-gnu
+          UPLOAD_MODE: none
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v1.3
+        with:
+          name: Windows Binary
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
