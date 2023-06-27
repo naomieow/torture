@@ -25,6 +25,7 @@ jobs:
         uses: rust-build/rust-build.action@v1.4.3
         with:
           RUSTTARGET: ${{ matrix.target }}
+          TOOLCHAIN_VERSION: stable
           UPLOAD_MODE: none
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.2
