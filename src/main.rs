@@ -134,6 +134,7 @@ fn setup(
         text_display_text: valence::entity::text_display::Text("Have fun!".into_text().bold().color(Color::DARK_RED)),
         look: Look::new(180.0, 0.0),
         text_display_background: Background(0),
+        display_scale: Scale(Vec3::from([1.5f32, 1.5f32, 1.5f32])),
         ..Default::default()
     });
 
