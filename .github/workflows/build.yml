@@ -18,13 +18,13 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - name: Unbuntu Build
+      - name: Ubuntu Build
         run: cargo build --release --all-features
       - name: Upload Ubuntu Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           name: Ubuntu Build
-          path: target/main
+          path: target/release/main
           if-no-files-found: warn
       - name: Windows Build
         run: cargo build --release --all-features --target x86_64-pc-windows-msvc
@@ -32,5 +32,5 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: Linux Build
-          path: target/main.exe
+          path: target/release/main.exe
           if-no-files-found: warn
