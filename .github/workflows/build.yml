@@ -12,22 +12,21 @@ env:
 jobs:
   build_and_test:
     name: Build
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
-        target: [x86_64-pc-windows-msvc, x86_64-unknown-linux-musl]
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - run: rustup target add ${{ matrix.target }}
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - run: cargo build --release --all-features --target ${{ matrix.target }}
+      - run: cargo build --release --all-features
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: Ubuntu Build
+          name: ${{ matrix.os }} Build
           path: |
             ${{ steps.compile.outputs.BUILT_ARCHIVE }}
             ${{ steps.compile.outputs.BUILT_CHECKSUM }}
