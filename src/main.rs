@@ -1,8 +1,6 @@
 use valence::{
     prelude::*, 
-    DefaultPlugins, 
-    inventory::HeldItem, 
-    client::hand_swing::HandSwingEvent, 
+    DefaultPlugins,
     entity::{
         block_display::BlockDisplayEntityBundle, 
         display::Scale, text_display::{TextDisplayEntityBundle, Background}
@@ -32,7 +30,7 @@ fn main() {
 
 fn build_app(app: &mut App) {
     app.insert_resource(NetworkSettings {
-        connection_mode: ConnectionMode::Online { prevent_proxy_connections: false },
+        connection_mode: ConnectionMode::Offline,
         callbacks: TortureCallbacks.into(),
         ..Default::default()
     })
@@ -41,28 +39,9 @@ fn build_app(app: &mut App) {
         .add_systems(Update, (
             init_clients,
             despawn_disconnected_clients,
-            on_client_click
         ),
     )
     .run();
-}
-
-fn on_client_click(
-    mut clients: Query<&HeldItem>,
-    mut _instances: Query<&mut Instance>,
-    mut hand_swing_events: EventReader<HandSwingEvent>,
-) {
-    let _instance = _instances.single();
-
-    for event in hand_swing_events.iter() {
-        let Ok(held) = clients.get_mut(event.client) else {
-            continue;
-        };
-
-        let bar_slot = held.slot() - 36;
-        
-        println!("Slot {} swung!", bar_slot);
-    }
 }
 
 fn setup(
